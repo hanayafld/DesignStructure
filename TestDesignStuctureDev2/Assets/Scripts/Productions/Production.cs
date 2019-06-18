@@ -5,16 +5,16 @@ using UnityEngine.UI;
 
 public class Production : MonoBehaviour
 {
-    public System.Action OnSceneEnd;
+    public System.Action OnProductionSkip;
     public Button btn_Skip;
 
     public void Init()
     {
-        Debug.Log("Intro Init");
+        Debug.Log("Production Init");
 
         this.btn_Skip.onClick.AddListener(() =>
         {
-            OnSceneEnd();
+            this.OnProductionSkip();
         });
     }
 }
