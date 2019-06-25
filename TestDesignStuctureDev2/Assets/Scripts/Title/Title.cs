@@ -13,16 +13,37 @@ public class Title : MonoBehaviour
     public Button btn_Option;
 
     //인포 매니져에서 받아올 스테이지 레벨
-    private int stageLevel;
+    private HeroInfo heroInfo;
 
     public void Init()
     {
         Debug.Log("Title Init");
         //GPGS연동
         //Data 불러오기
+        var data = DataManager.Instance;
+        data.LoadAllDatas();
+
         //Info 불러오기
-        //test
-        this.stageLevel = 1;
+        //true 면 기존유저, false면 신규유저
+        var userCheck = InfoManager.Instance.LoadHeroInfo();
+
+        if (userCheck)
+        {
+            //기존유저
+            //이어하기 활성화
+            this.btn_Continew.gameObject.SetActive(true);
+
+            //히어로 인포 저장
+            this.heroInfo = InfoManager.Instance.heroInfo;
+        }
+        else
+        {
+            //신규유저
+            //이어하기 비 활성화
+            this.btn_Continew.gameObject.SetActive(false);
+
+        }
+        
         //페이드 인 아웃
         //게임 시작 준비 호출
         this.Ready2theGame();
@@ -31,29 +52,27 @@ public class Title : MonoBehaviour
 
     private void Ready2theGame()
     {
-        #region 씬 전환
-        //stageLevel 은 나중에 userInfo의 stageLevel로 대체한다.
         Debug.Log("Ready2theGame");
+
+        #region 씬 전환
         //버튼 3개
-        //스테이지 레벨이 0 == 이어하기 정보가 없을경우
-        if (this.stageLevel == 0)
-        {
-            //이어하기 버튼 비활성화
-            this.btn_Continew.gameObject.SetActive(false);
-        }
 
         this.btn_Continew.onClick.AddListener(() =>
         {
             Debug.Log("이어 하기");
+            var stageLevel = this.heroInfo.stageLevel;
             //인게임 불러오기
-            this.InGameInit(this.stageLevel);
+            this.InGameInit(this.heroInfo);
         });
 
         this.btn_NewGame.onClick.AddListener(() =>
         {
             Debug.Log("새 게임");
             //인게임 불러오기
-            this.InGameInit(0);
+            InfoManager.Instance.CreateInfo();
+            this.heroInfo = InfoManager.Instance.heroInfo;
+            var stageLevel = this.heroInfo.stageLevel;
+            this.InGameInit(this.heroInfo);
         });
         #endregion
 
@@ -64,7 +83,7 @@ public class Title : MonoBehaviour
         });
     }
 
-    private void InGameInit(int stageLevel)
+    private void InGameInit(HeroInfo heroInfo)
     {
         var operInGame = SceneManager.LoadSceneAsync("InGame");
         operInGame.completed += (AsyncOperation) =>
@@ -76,7 +95,7 @@ public class Title : MonoBehaviour
                     //
                     this.OnTitleSceneEnd();
                 };
-              inGame.Init(stageLevel);
+              inGame.Init(this.heroInfo);
           };
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Stage : MonoBehaviour
 {
-    public System.Action OnStageClear;
+    public System.Action<HeroInfo> OnStageClear;
     public System.Action OnStageRetry;
     public System.Action OnStageReturn;
 
@@ -18,10 +18,15 @@ public class Stage : MonoBehaviour
     public Button btn_Retry;
     public Button btn_Return;
 
-    public void Init(int stageLevel)
+    private HeroInfo heroInfo;
+
+    public void Init(HeroInfo heroInfo)
     {
         Debug.Log("Stage Init");
-        this.txt_StageLevel.text = string.Format("Stage : {0}", stageLevel);
+        this.heroInfo = heroInfo;
+        this.txt_StageLevel.text = string.Format("Stage : {0}", this.heroInfo.stageLevel);
+
+        
 
         #region 게임 기능
 
@@ -33,7 +38,7 @@ public class Stage : MonoBehaviour
         //스테이지 클리어시 this.OnStageEnd();
         btn_StageClear.onClick.AddListener(() =>
         {
-            this.OnStageClear();
+            this.OnStageClear(this.heroInfo);
         });
 
         //패배시 YouDied팝업 띄우고
