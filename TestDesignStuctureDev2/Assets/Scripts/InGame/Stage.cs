@@ -25,7 +25,8 @@ public class Stage : MonoBehaviour
         Debug.Log("Stage Init");
         this.heroInfo = heroInfo;
         this.txt_StageLevel.text = string.Format("Stage : {0}", this.heroInfo.stageLevel);
-
+        //스테이지에서 제일 먼저 할것, 스테이지프리팹 불러오기
+        DataManager.Instance.LoadAllDatas();
         
 
         #region 게임 기능

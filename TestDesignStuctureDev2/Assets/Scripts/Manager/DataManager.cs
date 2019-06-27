@@ -9,7 +9,7 @@ public class DataManager : MonoBehaviour
     public static DataManager Instance;
 
     public Dictionary<int, HeroData> dicHeroData;
-
+    public Dictionary<int, StageData> dicStageData;
     //ex
     //public Dictionary<int, MonsterData> dicMonsterData;
 
@@ -25,6 +25,7 @@ public class DataManager : MonoBehaviour
 
         #region 로드데이터 호출
         this.dicHeroData = this.LoadData<HeroData>("Data/HeroData");
+        this.dicStageData = this.LoadData<StageData>("Data/StageData");
 
         //ex
         //this.dicMonsterData = this.LoadData<MonsterData>("Data/MonsterData");
