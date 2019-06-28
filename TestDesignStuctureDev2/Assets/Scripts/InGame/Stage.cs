@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class Stage : MonoBehaviour
 {
+    #region Data
+    private Dictionary<int, StageData> dicStageData = new Dictionary<int, StageData>();
+    #endregion
+    
     public System.Action<HeroInfo> OnStageClear;
     public System.Action OnStageRetry;
     public System.Action OnStageReturn;
@@ -18,24 +22,31 @@ public class Stage : MonoBehaviour
     public Button btn_Retry;
     public Button btn_Return;
 
+    #region StagePrefab
+    private GameObject[] arrMap;
+    private AudioSource bg_Music;
+    #endregion
+
     private HeroInfo heroInfo;
+    private int heroHp;
 
     public void Init(HeroInfo heroInfo)
     {
         Debug.Log("Stage Init");
-        this.heroInfo = heroInfo;
-        this.txt_StageLevel.text = string.Format("Stage : {0}", this.heroInfo.stageLevel);
+
+        #region 준비
+        this.heroInfo = heroInfo;//매개변수로 넘어온 히어로 인포 이용
+        this.heroHp = this.heroInfo.max_hp;
+
+        this.txt_StageLevel.text = string.Format("Stage : {0}", this.heroInfo.stageLevel);//레벨 띄우기, 나중에 제거 혹은 변경
         //스테이지에서 제일 먼저 할것, 스테이지프리팹 불러오기
-        DataManager.Instance.LoadAllDatas();
-        
+        DataManager.Instance.LoadAllDatas();//데이터 로드
+        this.dicStageData = DataManager.Instance.dicStageData;//데이터 저장
 
-        #region 게임 기능
+        this.LoadStagePrefab();//스테이지 프리팹 로드
+        #endregion
 
-        //이동, 전투 반복
-        //BGM시작, 메트로놈 같이 시작
-        //적 조우시 전투
-
-
+        #region 씬전환
         //스테이지 클리어시 this.OnStageEnd();
         btn_StageClear.onClick.AddListener(() =>
         {
@@ -66,5 +77,23 @@ public class Stage : MonoBehaviour
         });
         #endregion
 
+
+        #region 게임 기능
+
+        //이동, 전투 반복
+        //BGM시작, 메트로놈 같이 시작
+        //적 조우시 전투
+
+        #endregion
+
+    }
+
+    private void LoadStagePrefab()
+    {
+        var stageGo = Resources.Load<GameObject>(this.dicStageData[this.heroInfo.stageLevel].stage_PreFabPath);
+        var stage = Instantiate(stageGo).GetComponent<StagePrefab>();
+        this.bg_Music = stage.bg_Music;//뮤직넘겨주기
+        this.arrMap = stage.arrMaps;//맵넘겨주기
+        //몬스터 그룹 넘겨주기
     }
 }
